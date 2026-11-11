@@ -47,7 +47,7 @@ high_charge_cutoff = bundle["high_charge_cutoff"]
 # -----------------------------------
 # Load original dataset
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+'''BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATA_PATH = os.path.join(
     BASE_DIR,
@@ -93,7 +93,40 @@ st.write("Actual dataset columns:")
 st.write(df.columns.tolist())
 
 st.write("Dataset shape:", df.shape)
-st.write("Dataset preview:", df.head())
+st.write("Dataset preview:", df.head())'''
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DATA_PATH = os.path.join(
+    BASE_DIR,
+    "data",
+    "Telco_customer_churn (1).xlsx"
+)
+
+@st.cache_data
+def load_data():
+    return pd.read_excel(DATA_PATH)
+
+
+# Check whether the local dataset exists
+if os.path.exists(DATA_PATH):
+    df = load_data()
+
+else:
+    st.warning("Dataset not found. Please upload the Excel file.")
+
+    uploaded_dataset = st.file_uploader(
+        "Upload Telco Customer Churn Dataset",
+        type=["xlsx", "xls"]
+    )
+
+    if uploaded_dataset is None:
+        st.info("Upload the dataset to access the dashboard.")
+        st.stop()
+
+    df = pd.read_excel(uploaded_dataset)
+
+df.columns = df.columns.str.strip()
 
 # =====================================
 # DATASET OVERVIEW
