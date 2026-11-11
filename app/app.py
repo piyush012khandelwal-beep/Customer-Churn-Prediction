@@ -48,15 +48,40 @@ high_charge_cutoff = bundle["high_charge_cutoff"]
 # Load original dataset
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 DATA_PATH = os.path.join(
-    BASE_DIR, "data", "Telco_customer_churn (1).xlsx"
+    BASE_DIR,
+    "data",
+    "Telco_customer_churn (1).xlsx"
 )
 
 @st.cache_data
 def load_data():
     return pd.read_excel(DATA_PATH)
 
-df = load_data()
+
+# Load local dataset if available
+if os.path.exists(DATA_PATH):
+    df = load_data()
+
+else:
+    # Ask for dataset when running on Streamlit Cloud
+    st.warning("Please upload the Telco Customer Churn dataset.")
+
+    uploaded_dataset = st.file_uploader(
+        "Upload Telco Customer Churn Excel File",
+        type=["xlsx", "xls"]
+    )
+
+    if uploaded_dataset is None:
+        st.info("Upload the Excel dataset to access the analytics dashboard.")
+        st.stop()
+
+    df = pd.read_excel(uploaded_dataset)
+
+# Clean column names
+df.columns = df.columns.str.strip()
+
 
 @st.cache_data
 def load_data():
